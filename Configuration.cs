@@ -12,6 +12,7 @@ namespace TwitchXIV
         public string ChannelToSend = "Channel to send chat to";
         public string OAuthCode = "";
         public bool TwitchEnabled = true;
+        //public bool TwitchOnlyMode = false;
 
         private IDalamudPluginInterface pluginInterface;
 
