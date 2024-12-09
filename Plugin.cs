@@ -7,6 +7,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using System;
 using System.Linq;
+using TwitchLib.Communication.Interfaces;
 using Veda;
 
 namespace TwitchXIV
@@ -211,6 +212,7 @@ namespace TwitchXIV
             WOLClient.Client.OnLeftChannel -= WOLClient.Client_OnLeftChannel;
             WOLClient.Client.OnMessageSent -= WOLClient.Client_OnMessageSent;
             WOLClient.Client.OnMessageReceived -= WOLClient.Client_OnMessageReceived;
+            //WOLClient.Client.OnError -= WOLClient.Client_OnError;
             //Chat.ChatMessage -= OnChatMessage;
         }
 

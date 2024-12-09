@@ -11,12 +11,15 @@ using System.Text.RegularExpressions;
 using TwitchLib.Api.Helix;
 using TwitchLib.Client.Events;
 using Veda;
+using System.Linq.Expressions;
+using TwitchLib.Communication.Events;
 
 namespace TwitchXIV
 {
     internal class WOLClient
     {
         public static TwitchClient Client;
+        public static bool DebugMode = false;
 
         public static void DoConnect()
         {
@@ -34,6 +37,7 @@ namespace TwitchXIV
             Client.OnLeftChannel += Client_OnLeftChannel;
             Client.OnMessageSent += Client_OnMessageSent;
             Client.OnMessageReceived += Client_OnMessageReceived;
+            //Client.OnError += Client_OnError;
 
             //WOLClient.OnWhisperReceived += Client_OnWhisperReceived;
             //WOLClient.OnNewSubscriber += Client_OnNewSubscriber;
@@ -41,10 +45,18 @@ namespace TwitchXIV
             Client.Connect();
         }
 
+        //public static void Client_OnError(object? sender, OnErrorEventArgs e)
+        //{
+        //    if (DebugMode)
+        //    {
+        //        Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, e.Exception.ToString(), ColorType.Twitch)); return;
+        //    }
+        //}
+
         public static void Client_OnLog(object sender, OnLogArgs e)
         {
             //Filter out all the stuff we don't need to see
-            if (e.Data.StartsWith("Finished channel joining queue.")) { return; }
+            if (e.Data.StartsWith("Finished channel joining queue.") & !DebugMode) { return; }
             if (e.Data.Contains("@msg-id=msg_channel_suspended"))
             {
                 //Chat.Print(e.Data);
@@ -59,10 +71,10 @@ namespace TwitchXIV
                 string Message = Regex.Match(e.Data, Plugin.PluginConfig.ChannelToSend.ToLower() + " :.*").Value.Replace(Plugin.PluginConfig.ChannelToSend.ToLower() + " :", "");
                 Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, Message, ColorType.Info));
             }
-            if (e.Data.StartsWith("Received:")) { return; }
-            if (e.Data.StartsWith("Writing:")) { return; }
-            if (e.Data.StartsWith("Connecting to")) { return; }
-            if (e.Data.StartsWith("Joining ") || e.Data.StartsWith("Leaving ")) { return; }
+            if (e.Data.StartsWith("Received:") & !DebugMode) { return; }
+            if (e.Data.StartsWith("Writing:") & !DebugMode) { return; }
+            if (e.Data.StartsWith("Connecting to") & !DebugMode) { return; }
+            if ((e.Data.StartsWith("Joining ") || e.Data.StartsWith("Leaving ")) & !DebugMode) { return; }
             if (e.Data == "Should be connected!") { Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, "Connected to twitch chat", ColorType.Twitch)); return; }
             if (e.Data == "Disconnect Twitch Chat Client...") { Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, "Disconnected from twitch chat", ColorType.Twitch)); return; }
 

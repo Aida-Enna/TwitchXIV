@@ -12,6 +12,8 @@ using System.Numerics;
 using TwitchLib.Api.Helix;
 using TwitchLib.Client.Models;
 using Veda;
+using static System.Formats.Asn1.AsnWriter;
+using System.Collections.Generic;
 
 namespace TwitchXIV
 {
@@ -19,6 +21,10 @@ namespace TwitchXIV
     {
         public bool IsVisible;
         public bool ShowSupport;
+        public static readonly string TwitchClientID = "2dx4tp1c75iyh27w0b1qfgfx23mjau";
+        public static readonly string TwitchRedirectUri = "https://aida.moe/TwitchXIV/plugin_return.php";
+        public static readonly string RequestedScopes = "user:read:chat+user:read:whispers+user:manage:whispers+user:write:chat+chat:edit+chat:read";
+
         public void Draw()
         {
             if (!IsVisible || !ImGui.Begin("Twitch XIV Config", ref IsVisible, ImGuiWindowFlags.AlwaysAutoResize))
@@ -30,12 +36,13 @@ namespace TwitchXIV
             ImGui.SetNextItemWidth(310);
             ImGui.InputText("Channel", ref Plugin.PluginConfig.ChannelToSend, 25);
             ImGui.Text("The last channel you join will be remembered and\nautomatically joined at plugin start.");
-            ImGui.Text("Enter your oath code here (including the \"oath:\" part):");
+            ImGui.Text("Enter your oauth code here (including the \"oauth:\" part):");
             ImGui.SetNextItemWidth(310);
             ImGui.InputText("OAuth", ref Plugin.PluginConfig.OAuthCode, 36);
             if (ImGui.Button("Save"))
             {
                 Plugin.PluginConfig.Save();
+                if (WOLClient.Client.IsConnected) { WOLClient.Client.Disconnect(); }
                 this.IsVisible = false;
                 Plugin.Chat.Print(Functions.BuildSeString("Twitch XIV","<c17>DO <c25>NOT <c37>SHARE <c45>YOUR <c48>OAUTH <c52>CODE <c500>WITH <c579>ANYONE!"));
                 WOLClient.DoConnect();
@@ -49,7 +56,9 @@ namespace TwitchXIV
             ImGui.Indent(275);
             if (ImGui.Button("Get OAuth code"))
             {
-                Functions.OpenWebsite("https://twitchapps.com/tmi/");
+                string AuthURL = "https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=" + TwitchClientID + "&redirect_uri=" + TwitchRedirectUri + "&scope=" + RequestedScopes;
+                Functions.OpenWebsite(AuthURL);
+                //Functions.OpenWebsite("https://twitchapps.com/tmi/"); 
             }
             ImGui.Spacing();
             ImGui.Indent(-275);
