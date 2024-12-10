@@ -62,13 +62,13 @@ namespace TwitchXIV
 
             try
             {
-                if (PluginConfig.Username != "Your twitch.tv username" && PluginConfig.OAuthCode.Length == 36)
+                if (PluginConfig.Username == "Your twitch.tv username" || PluginConfig.ChannelToSend == "Channel to send chat to" || PluginConfig.OAuthCode.Length < 36)
                 {
-                    WOLClient.DoConnect();
+                    Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "Please open the config with <c575>/twitch and set your credentials."));
                 }
                 else
                 {
-                    Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "Please open the config with <c575>/twitch and set your credentials."));
+                    WOLClient.DoConnect();
                 }
             }
             catch(Exception f)
@@ -206,12 +206,15 @@ namespace TwitchXIV
                 ui.IsVisible = !ui.IsVisible;
             };
 
-            if (WOLClient.Client.IsConnected) { WOLClient.Client.Disconnect(); }
-            WOLClient.Client.OnLog -= WOLClient.Client_OnLog;
-            WOLClient.Client.OnJoinedChannel -= WOLClient.Client_OnJoinedChannel;
-            WOLClient.Client.OnLeftChannel -= WOLClient.Client_OnLeftChannel;
-            WOLClient.Client.OnMessageSent -= WOLClient.Client_OnMessageSent;
-            WOLClient.Client.OnMessageReceived -= WOLClient.Client_OnMessageReceived;
+            if (WOLClient.Client != null)
+            {
+                if (WOLClient.Client.IsConnected) { WOLClient.Client.Disconnect(); }
+                WOLClient.Client.OnLog -= WOLClient.Client_OnLog;
+                WOLClient.Client.OnJoinedChannel -= WOLClient.Client_OnJoinedChannel;
+                WOLClient.Client.OnLeftChannel -= WOLClient.Client_OnLeftChannel;
+                WOLClient.Client.OnMessageSent -= WOLClient.Client_OnMessageSent;
+                WOLClient.Client.OnMessageReceived -= WOLClient.Client_OnMessageReceived;
+            }
             //WOLClient.Client.OnError -= WOLClient.Client_OnError;
             //Chat.ChatMessage -= OnChatMessage;
         }

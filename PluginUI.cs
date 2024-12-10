@@ -14,6 +14,7 @@ using TwitchLib.Client.Models;
 using Veda;
 using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
+using Dalamud.Interface.Utility.Raii;
 
 namespace TwitchXIV
 {
@@ -21,6 +22,7 @@ namespace TwitchXIV
     {
         public bool IsVisible;
         public bool ShowSupport;
+        public bool PopupOpen = false;
         public static readonly string TwitchClientID = "2dx4tp1c75iyh27w0b1qfgfx23mjau";
         public static readonly string TwitchRedirectUri = "https://aida.moe/TwitchXIV/plugin_return.php";
         public static readonly string RequestedScopes = "user:read:chat+user:read:whispers+user:manage:whispers+user:write:chat+chat:edit+chat:read";
@@ -41,8 +43,26 @@ namespace TwitchXIV
             ImGui.InputText("OAuth", ref Plugin.PluginConfig.OAuthCode, 36);
             if (ImGui.Button("Save"))
             {
+                if (Plugin.PluginConfig.Username == "Your twitch.tv username")
+                {
+                    Plugin.Chat.Print(Functions.BuildSeString("TwitchXIV", $"Please enter your twitch username in the first input box.",ColorType.Error));
+                    return;
+                }
+                if (Plugin.PluginConfig.ChannelToSend == "Channel to send chat to")
+                {
+                    Plugin.Chat.Print(Functions.BuildSeString("TwitchXIV", $"Please enter a channel in the second input box.", ColorType.Error));
+                    return;
+                }
+                if (Plugin.PluginConfig.OAuthCode.Length < 36)
+                {
+                    Plugin.Chat.Print(Functions.BuildSeString("TwitchXIV", $"Please make sure your oauth code is correct and includes the beginning \"oauth:\" part.", ColorType.Error));
+                    return;
+                }
                 Plugin.PluginConfig.Save();
-                if (WOLClient.Client.IsConnected) { WOLClient.Client.Disconnect(); }
+                if (WOLClient.Client != null)
+                {
+                    if (WOLClient.Client.IsConnected) { WOLClient.Client.Disconnect(); }
+                }
                 this.IsVisible = false;
                 Plugin.Chat.Print(Functions.BuildSeString("Twitch XIV","<c17>DO <c25>NOT <c37>SHARE <c45>YOUR <c48>OAUTH <c52>CODE <c500>WITH <c579>ANYONE!"));
                 WOLClient.DoConnect();
