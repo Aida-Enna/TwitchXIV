@@ -1,14 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/12.0.2">
-  <PropertyGroup>
-    <Version>1.0.0.6</Version>
-	<TargetFramework>net9.0</TargetFramework>
-	<OutputPath>..\Build\TwitchXIV\</OutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="TwitchXIV.json" />
-  </ItemGroup>
-
+﻿<Project Sdk="Dalamud.NET.Sdk/13.0.0">
+	<PropertyGroup>
+		<Version>1.0.0.7</Version>
+		<TargetFramework>net9.0</TargetFramework>
+		<OutputPath>..\Build\TwitchXIV\</OutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<Content Include="TwitchXIV.json" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="TwitchLib" Version="3.5.3" />
 	</ItemGroup>
