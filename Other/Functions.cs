@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TwitchLib.Api.Helix;
+using TwitchXIV;
 
 namespace Veda
 {
@@ -13,6 +15,11 @@ namespace Veda
         public static void OpenWebsite(string URL)
         {
             Process.Start(new ProcessStartInfo { FileName = URL, UseShellExecute = true });
+        }
+
+        public static void Print(string Message, ushort Color = ColorType.Normal)
+        {
+            Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, Message, Color));
         }
 
         public static SeString BuildSeString(string PluginName, string Message, ushort Color = ColorType.Normal)

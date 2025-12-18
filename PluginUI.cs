@@ -45,17 +45,17 @@ namespace TwitchXIV
             {
                 if (Plugin.PluginConfig.Username == "Your twitch.tv username")
                 {
-                    Plugin.Chat.Print(Functions.BuildSeString("TwitchXIV", $"Please enter your twitch username in the first input box.",ColorType.Error));
+                    Functions.Print($"Please enter your twitch username in the first input box.",ColorType.Error);
                     return;
                 }
                 if (Plugin.PluginConfig.ChannelToSend == "Channel to send chat to")
                 {
-                    Plugin.Chat.Print(Functions.BuildSeString("TwitchXIV", $"Please enter a channel in the second input box.", ColorType.Error));
+                    Functions.Print($"Please enter a channel in the second input box.", ColorType.Error);
                     return;
                 }
                 if (Plugin.PluginConfig.OAuthCode.Length < 36)
                 {
-                    Plugin.Chat.Print(Functions.BuildSeString("TwitchXIV", $"Please make sure your oauth code is correct and includes the beginning \"oauth:\" part.", ColorType.Error));
+                    Functions.Print($"Please make sure your oauth code is correct and includes the beginning \"oauth:\" part.", ColorType.Error);
                     return;
                 }
                 Plugin.PluginConfig.Save();
@@ -64,13 +64,13 @@ namespace TwitchXIV
                     if (WOLClient.Client.IsConnected) { WOLClient.Client.Disconnect(); }
                 }
                 this.IsVisible = false;
-                Plugin.Chat.Print(Functions.BuildSeString("Twitch XIV","<c17>DO <c25>NOT <c37>SHARE <c45>YOUR <c48>OAUTH <c52>CODE <c500>WITH <c579>ANYONE!"));
+                Functions.Print("<c17>DO <c25>NOT <c37>SHARE <c45>YOUR <c48>OAUTH <c52>CODE <c500>WITH <c579>ANYONE!");
                 WOLClient.DoConnect();
             }
             ImGui.SameLine();
             if (ImGui.Checkbox("Relay twitch chat to chatbox", ref Plugin.PluginConfig.TwitchEnabled))
             {
-                Plugin.Chat.Print(Functions.BuildSeString("TwitchXIV",$"Toggled twitch chat {(Plugin.PluginConfig.TwitchEnabled ? "on" : "off")}."));
+                Functions.Print($"Toggled twitch chat {(Plugin.PluginConfig.TwitchEnabled ? "on" : "off")}.");
             }
             ImGui.SameLine();
             ImGui.Indent(275);

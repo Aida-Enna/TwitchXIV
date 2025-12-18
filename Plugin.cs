@@ -64,7 +64,7 @@ namespace TwitchXIV
             {
                 if (PluginConfig.Username == "Your twitch.tv username" || PluginConfig.ChannelToSend == "Channel to send chat to" || PluginConfig.OAuthCode.Length < 36)
                 {
-                    Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "Please open the config with <c575>/twitch and set your credentials."));
+                    Functions.Print("Please open the config with <c575>/twitch and set your credentials.");
                 }
                 else
                 {
@@ -73,8 +73,8 @@ namespace TwitchXIV
             }
             catch(Exception f)
             {
-                Chat.PrintError("Something went wrong - " + f.Message.ToString());
-                Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "Please open the config with <c575>/twitch and double check your credentials."));
+                Functions.Print("Something went wrong - " + f.Message.ToString(), ColorType.Error);
+                Functions.Print("Please open the config with <c575>/twitch and double check your credentials.");
             }
         }
 
@@ -129,11 +129,11 @@ namespace TwitchXIV
             if (WOLClient.Client.IsConnected)
             {
                 WOLClient.Client.Disconnect();
-                Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "You have left the channel.", ColorType.Twitch));
+                Functions.Print("You have left the channel.", ColorType.Twitch);
             }
             else
             {
-                Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "You are not currently connected!", ColorType.Warn));
+                Functions.Print("You are not currently connected!", ColorType.Warn);
             }
         }
 
@@ -142,7 +142,7 @@ namespace TwitchXIV
         public void ToggleTwitch(string command, string args)
         {
             PluginConfig.TwitchEnabled = !PluginConfig.TwitchEnabled;
-            Chat.Print($"Toggled twitch chat {(PluginConfig.TwitchEnabled ? "on" : "off")}.");
+            Functions.Print($"Toggled twitch chat {(PluginConfig.TwitchEnabled ? "on" : "off")}.");
         }
 
         [Command("/tw")]
@@ -151,13 +151,18 @@ namespace TwitchXIV
         {
             if(String.IsNullOrWhiteSpace(args))
             {
-                Chat.PrintError("Error: No message specified");
-                Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "Usage: /tw Hey guys, how is the stream going?", ColorType.Warn));
+                Functions.Print("Error: No message specified", ColorType.Error);
+                Functions.Print("Usage: /tw Hey, how is the stream going?", ColorType.Warn);
                 return;
             }
             if (WOLClient.Client.IsConnected == false)
             {
-                Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "You are not currently connected to a channel.", ColorType.Twitch));
+                Functions.Print("You are not currently connected.", ColorType.Twitch);
+                return;
+            }
+            if (WOLClient.Client.JoinedChannels.Count() == 0)
+            {
+                Functions.Print("You are not currently connected to a channel.", ColorType.Twitch);
                 return;
             }
             WOLClient.Client.SendMessage(WOLClient.Client.JoinedChannels.First(), args);
@@ -171,22 +176,31 @@ namespace TwitchXIV
             {
                 if (String.IsNullOrWhiteSpace(args))
                 {
-                    Chat.PrintError("Error: No channel specified");
-                    Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "Usage: /tchannel streamer_username\nExample: /tchannel zackrawrr", ColorType.Warn));
+                    Functions.Print("Error: No channel specified", ColorType.Error);
+                    Functions.Print("Usage: /tchannel streamer_username", ColorType.Warn);
+                    Functions.Print("Example: /tchannel theburntpeanut", ColorType.Warn);
                     return;
                 }
                 if (WOLClient.Client.JoinedChannels.Count() > 0) { WOLClient.Client.LeaveChannel(WOLClient.Client.JoinedChannels.First()); }
                 PluginConfig.ChannelToSend = args;
                 if (WOLClient.Client.IsConnected == false)
                 {
-                    Chat.Print(Functions.BuildSeString(PluginInterface.InternalName, "Connecting to Twitch...", ColorType.Twitch));
+                    Functions.Print("Connecting to Twitch...", ColorType.Twitch);
                     WOLClient.DoConnect();
                 }
                 WOLClient.Client.JoinChannel(args);
+                if (WOLClient.Client.JoinedChannels.Count() > 0)
+                {
+                    Functions.Print("Channel joined!", ColorType.Twitch);
+                }
+                else
+                {
+                    Functions.Print("Channel join failed!", ColorType.Error);
+                }
             }
             catch(Exception f)
             {
-                Chat.PrintError(f.ToString());
+                Functions.Print(f.ToString(), ColorType.Error);
             }
         }
         #region IDisposable Support

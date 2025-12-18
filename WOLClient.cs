@@ -55,6 +55,12 @@ namespace TwitchXIV
 
         public static void Client_OnLog(object sender, OnLogArgs e)
         {
+            if (e.Data.Contains("Login authentication failed"))
+            {
+                Functions.Print("Login authentification failed! Please check your username and OAuth code!", ColorType.Error);
+                Client.Disconnect();
+                return;
+            }
             //Filter out all the stuff we don't need to see
             if (e.Data.StartsWith("Finished channel joining queue.") & !DebugMode) { return; }
             if (e.Data.Contains("@msg-id=msg_channel_suspended"))
@@ -69,32 +75,25 @@ namespace TwitchXIV
             {
                 //Chat.Print(e.Data);
                 string Message = Regex.Match(e.Data, Plugin.PluginConfig.ChannelToSend.ToLower() + " :.*").Value.Replace(Plugin.PluginConfig.ChannelToSend.ToLower() + " :", "");
-                Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, Message, ColorType.Info));
+                Functions.Print(Message, ColorType.Info);
             }
             if (e.Data.StartsWith("Received:") & !DebugMode) { return; }
             if (e.Data.StartsWith("Writing:") & !DebugMode) { return; }
             if (e.Data.StartsWith("Connecting to") & !DebugMode) { return; }
             if ((e.Data.StartsWith("Joining ") || e.Data.StartsWith("Leaving ")) & !DebugMode) { return; }
-            if (e.Data == "Should be connected!") { Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, "Connected to twitch chat", ColorType.Twitch)); return; }
-            if (e.Data == "Disconnect Twitch Chat Client...") { Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, "Disconnected from twitch chat", ColorType.Twitch)); return; }
+            if (e.Data == "Should be connected!") { Functions.Print("Connected to twitch chat", ColorType.Twitch); return; }
+            if (e.Data == "Disconnect Twitch Chat Client...") { Functions.Print("Disconnected from twitch chat", ColorType.Twitch); return; }
 
-            Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, e.Data, ColorType.Twitch));
+            Functions.Print(e.Data, ColorType.Twitch);
         }
-
-        public static void Log(string Message)
-        {
-            Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, Message));
-            //if (WriteToFile) File.AppendAllText("logs/ThemperorLog.txt", $"[{System.DateTime.Now.ToString("G")}] " + Message + Environment.NewLine);
-        }
-
         public static void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            Log("<c541>Joined <c541>channel <c575>" + e.Channel);
+            Functions.Print("<c541>Joined <c541>channel <c575>" + e.Channel);
         }
 
         public static void Client_OnLeftChannel(object sender, OnLeftChannelArgs e)
         {
-            Log("<c541>Left <c541>channel <c575>" + e.Channel);
+            Functions.Print("<c541>Left <c541>channel <c575>" + e.Channel);
         }
         public static void Client_OnMessageSent(object sender, OnMessageSentArgs e)
         {
@@ -156,7 +155,7 @@ namespace TwitchXIV
             }
             catch (Exception f)
             {
-                Plugin.Chat.PrintError("Something went wrong - " + f.ToString());
+                Functions.Print("Something went wrong - " + f.ToString(), ColorType.Error);
                 return "<c0>";
             }
         }
