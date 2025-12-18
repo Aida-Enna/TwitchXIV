@@ -4,7 +4,6 @@ using Dalamud.Game.Gui;
 using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Bindings.ImGui;
-using ImGuiScene;
 using System;
 using System.Diagnostics;
 using System.Net;
