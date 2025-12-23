@@ -229,6 +229,8 @@ namespace TwitchXIV
                 WOLClient.Client.OnMessageSent -= WOLClient.Client_OnMessageSent;
                 WOLClient.Client.OnMessageReceived -= WOLClient.Client_OnMessageReceived;
             }
+
+            WOLClient.Client = null;
             //WOLClient.Client.OnError -= WOLClient.Client_OnError;
             //Chat.ChatMessage -= OnChatMessage;
         }

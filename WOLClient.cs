@@ -20,6 +20,7 @@ namespace TwitchXIV
     {
         public static TwitchClient Client;
         public static bool DebugMode = false;
+        public static bool ShownLoginError = false;
 
         public static void DoConnect()
         {
@@ -55,11 +56,10 @@ namespace TwitchXIV
 
         public static void Client_OnLog(object sender, OnLogArgs e)
         {
-            if (e.Data.Contains("Login authentication failed"))
+            if (e.Data.Contains("Login authentication failed") && !ShownLoginError)
             {
-                Functions.Print("Login authentification failed! Please check your username and OAuth code!", ColorType.Error);
-                Client.Disconnect();
-                return;
+                Functions.Print("Login authentication failed! Please check your username and OAuth code!", ColorType.Error);
+                ShownLoginError = true;
             }
             //Filter out all the stuff we don't need to see
             if (e.Data.StartsWith("Finished channel joining queue.") & !DebugMode) { return; }
