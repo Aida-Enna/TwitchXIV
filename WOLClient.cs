@@ -67,7 +67,7 @@ namespace TwitchXIV
             {
                 //Chat.Print(e.Data);
                 //string Channel = e.Data.Replace("@msg-id=msg_channel_suspended :tmi.twitch.tv NOTICE #", "").Replace(" :This channel does not exist or has been suspended.", "");
-                Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, "<c17>Unable <c17>to <c17>join <c575>" + Plugin.PluginConfig.ChannelToSend + " <c17>channel, <c17>reverting <c17>back <c17>to <c17>your <c17>channel. <c17>Please <c17>check <c17>the <c17>name <c17>and <c17>try <c17>again."));
+                Functions.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, "<c17>Unable <c17>to <c17>join <c575>" + Plugin.PluginConfig.ChannelToSend + " <c17>channel, <c17>reverting <c17>back <c17>to <c17>your <c17>channel. <c17>Please <c17>check <c17>the <c17>name <c17>and <c17>try <c17>again."));
                 Plugin.PluginConfig.ChannelToSend = Client.TwitchUsername;
                 Client.JoinChannel(Client.TwitchUsername);
             }
@@ -99,14 +99,14 @@ namespace TwitchXIV
         {
             string DisplayName = e.SentMessage.DisplayName;
             if (e.SentMessage.IsModerator) { DisplayName = "" + DisplayName; }
-            Plugin.Chat.Print(Functions.BuildSeString("<c555>TWXIV", GetUsercolor(Client.TwitchUsername) + DisplayName + ": <c0>" + e.SentMessage.Message.Replace(" ", " <c0>")));
+            Functions.Print(Functions.BuildSeString("<c555>TWXIV", GetUsercolor(Client.TwitchUsername) + DisplayName + ": <c0>" + e.SentMessage.Message.Replace(" ", " <c0>")));
         }
         public static void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             if (!Plugin.PluginConfig.TwitchEnabled) { return; }
             string DisplayName = e.ChatMessage.DisplayName;
             if (e.ChatMessage.IsModerator) { DisplayName = "" + DisplayName; }
-            Plugin.Chat.Print(Functions.BuildSeString("<c555>TWXIV", GetUsercolor(e.ChatMessage.Username) + DisplayName + ": <c0>" + e.ChatMessage.Message.Replace(" ", " <c0>")));
+            Functions.Print(Functions.BuildSeString("<c555>TWXIV", GetUsercolor(e.ChatMessage.Username) + DisplayName + ": <c0>" + e.ChatMessage.Message.Replace(" ", " <c0>")));
         }
 
         public static string GetUsercolor(string Username)

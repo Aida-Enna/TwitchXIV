@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Text.SeStringHandling;
+﻿using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,26 @@ namespace Veda
             Process.Start(new ProcessStartInfo { FileName = URL, UseShellExecute = true });
         }
 
-        public static void Print(string Message, ushort Color = ColorType.Normal)
+        public static void Print(string Message, ushort Color = ColorType.Normal, XivChatType ChatType = XivChatType.Debug)
         {
-            Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, Message, Color));
+            XivChatEntry entry = new()
+            {
+                Type = ChatType,
+                Message = Functions.BuildSeString(Plugin.PluginInterface.InternalName, Message, Color),
+                Silent = true
+            };
+            Plugin.Chat.Print(entry);
+        }
+
+        public static void Print(SeString Message, XivChatType ChatType = XivChatType.Debug)
+        {
+            XivChatEntry entry = new()
+            {
+                Type = ChatType,
+                Message = Message,
+                Silent = true
+            };
+            Plugin.Chat.Print(entry);
         }
 
         public static SeString BuildSeString(string PluginName, string Message, ushort Color = ColorType.Normal)
