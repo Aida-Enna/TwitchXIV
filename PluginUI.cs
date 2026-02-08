@@ -39,7 +39,7 @@ namespace TwitchXIV
             ImGui.Text("The last channel you join will be remembered and\nautomatically joined at plugin start.");
             ImGui.Text("Enter your oauth code here (including the \"oauth:\" part):");
             ImGui.SetNextItemWidth(310);
-            ImGui.InputText("OAuth", ref Plugin.PluginConfig.OAuthCode, 36);
+            ImGui.InputText("OAuth", ref Plugin.PluginConfig.OAuthCode, 36, ImGuiInputTextFlags.Password);
             if (ImGui.Button("Save"))
             {
                 if (Plugin.PluginConfig.Username == "Your twitch.tv username")
