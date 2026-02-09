@@ -1,14 +1,15 @@
 ﻿{
-  "Author": "Aida Enna",
-  "Name": "Twitch XIV",
+  "Author": "Aida Enna & Tony Massarini",
+  "Name": "Twitch XIV (Reimagined)",
   "ApplicableVersion": "any",
-  "Description": "Allows you to join a Twitch chat and send messages and (optionally) have the twitch chat come through your chatbox.",
+  "Description": "Allows you to join a Twitch chat and send/recieve messages",
   "Punchline": "Sup y'all? It's ya boy, Twitch XIV, and today we're gonna be playing some final fantasy fourteen.",
-  "RepoUrl": "https://github.com/Aida-Enna/TwitchXIV",
+  "RepoUrl": "https://github.com/Tny5989/TwitchXIV",
   "Tags": [
     "twitch",
     "stream",
-    "aida"
+    "aida",
+    "tny5989"
   ],
   "IconUrl": "https://i.imgur.com/U0L1ior.png"
 }

@@ -28,7 +28,7 @@ namespace TwitchXIV
         public void Draw()
         {
             ImGui.SetNextWindowSize(new(400, 0), ImGuiCond.Always);
-            if (!IsVisible || !ImGui.Begin("Twitch XIV Config", ref IsVisible, ImGuiWindowFlags.AlwaysAutoResize))
+            if (!IsVisible || !ImGui.Begin("Twitch XIV (Reimagined) Config", ref IsVisible, ImGuiWindowFlags.AlwaysAutoResize))
             {
                 ImGui.End();
                 return;
