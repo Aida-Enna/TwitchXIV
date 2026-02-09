@@ -27,7 +27,7 @@ namespace TwitchXIV
 
         public void Draw()
         {
-            ImGui.SetNextWindowSize(new(400, 0), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSize(new(400, 0), ImGuiCond.Always);
             if (!IsVisible || !ImGui.Begin("Twitch XIV Config", ref IsVisible, ImGuiWindowFlags.AlwaysAutoResize))
             {
                 ImGui.End();
@@ -130,7 +130,7 @@ namespace TwitchXIV
             ImGui.Spacing();
 
             // show support
-            if (ImGui.Button("Want to help support my work?", new(regionWidth, 0)))
+            if (ImGui.Button("Want to help support the original author?", new(regionWidth, 0)))
             {
                 ShowSupport = !ShowSupport;
             }
