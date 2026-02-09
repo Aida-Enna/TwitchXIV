@@ -76,17 +76,14 @@ namespace TwitchXIV
             {
                 if (Plugin.PluginConfig.Username == "Your twitch.tv username")
                 {
-                    //Functions.Print($"Please enter your twitch username in the first input box.", ColorType.Error); TODO
                     return;
                 }
                 if (Plugin.PluginConfig.ChannelToSend == "Channel to send chat to")
                 {
-                    //Functions.Print($"Please enter a channel in the second input box.", ColorType.Error); TODO
                     return;
                 }
                 if (Plugin.PluginConfig.OAuthCode.Length < 36)
                 {
-                    //Functions.Print($"Please make sure your oauth code is correct and includes the beginning \"oauth:\" part.", ColorType.Error); TODO
                     return;
                 }
 
@@ -96,7 +93,7 @@ namespace TwitchXIV
                 }
                 Plugin.TwitchClient.Dispose();
 
-                //Functions.Print("<c17>DO <c25>NOT <c37>SHARE <c45>YOUR <c48>OAUTH <c52>CODE <c500>WITH <c579>ANYONE!"); TODO
+                Plugin.Logger.Print("DO NOT SHARE YOUR OAUTH CODE WITH ANYONE!");
                 Plugin.TwitchClient = new();
                 Plugin.TwitchClient.Connect();
             }
