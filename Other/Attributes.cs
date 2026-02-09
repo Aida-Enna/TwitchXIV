@@ -1,32 +1,27 @@
 ﻿using System;
 
-namespace Veda
+namespace TwitchXIV.Other
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class AliasesAttribute : Attribute
+    public class AliasesAttribute(params string[] aliases) : Attribute
     {
-        public string[] Aliases { get; }
-
-        public AliasesAttribute(params string[] aliases) => Aliases = aliases;
+        public string[] Aliases { get; } = aliases;
     }
 
     [AttributeUsage(AttributeTargets.Method)]
-    public class CommandAttribute : Attribute
+    public class CommandAttribute(string command) : Attribute
     {
-        public string Command { get; }
-
-        public CommandAttribute(string command) => Command = command;
+        public string Command { get; } = command;
     }
 
     [AttributeUsage(AttributeTargets.Method)]
     public class DoNotShowInHelpAttribute : Attribute
     {
     }
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HelpMessageAttribute : Attribute
-    {
-        public string HelpMessage { get; }
 
-        public HelpMessageAttribute(string helpMessage) => HelpMessage = helpMessage;
+    [AttributeUsage(AttributeTargets.Method)]
+    public class HelpMessageAttribute(string helpMessage) : Attribute
+    {
+        public string HelpMessage { get; } = helpMessage;
     }
 }
