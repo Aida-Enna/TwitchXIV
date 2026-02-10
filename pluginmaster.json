@@ -2,7 +2,7 @@
   {
     "Author": "Aida Enna, Tony Massarini",
     "Name": "TwitchXIV (Reimagined)",
-    "Description": "Allows you to join a Twitch chat and send/recieve messages",
+    "Description": "Allows you to join a Twitch chat and send/receieve messages",
     "Punchline": "Sup y'all? It's ya boy, Twitch XIV, and today we're gonna be playing some final fantasy fourteen.",
     "InternalName": "TwitchXIV",
     "AssemblyVersion": "1.0.1.0",
@@ -11,21 +11,18 @@
     "CategoryTags":
     [
       "twitch",
-      "stream",
-      "aida",
-      "tny5989"
+      "stream"
     ],
-    "DalamudApiLevel": "14",
-    "IconUrl": "https://github.com/Tny5989/TwitchXIV/blob/main/images/icon.png",
+    "DalamudApiLevel": 14,
+    "IconUrl": "https://raw.githubusercontent.com/Tny5989/TwitchXIV/main/images/icon.png",
     "ImageUrls": 
     [
-      "https://github.com/Tny5989/TwitchXIV/blob/main/images/example.png"
+      "https://raw.githubusercontent.com/Tny5989/TwitchXIV/main/images/example.png"
     ],
-    "IsHide": false,
+    "IsHidden": false,
     "IsTestingExclusive": false,
     "DownloadLinkInstall": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.0/latest.zip",
     "DownloadLinkTesting": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.0/latest.zip",
-    "DownloadLinkUpdate": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.0/latest.zip",
-    "DownloadCount": 1
+    "DownloadLinkUpdate": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.0/latest.zip"
   }
 ]
