@@ -1,10 +1,10 @@
 [
   {
     "Author": "Aida Enna, Tony Massarini",
-    "Name": "TwitchXIV (Reimagined)",
+    "Name": "TwitchXIV Reborn",
     "Description": "Allows you to join a Twitch chat and send/receieve messages",
     "Punchline": "Sup y'all? It's ya boy, Twitch XIV, and today we're gonna be playing some final fantasy fourteen.",
-    "InternalName": "TwitchXIV",
+    "InternalName": "TwitchXIVReborn",
     "AssemblyVersion": "1.0.1.0",
     "RepoUrl": "https://github.com/Tny5989/TwitchXIV",
     "ApplicableVersion": "any",
