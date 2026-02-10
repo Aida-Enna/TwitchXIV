@@ -5,7 +5,7 @@
     "Description": "Allows you to join a Twitch chat and send/receieve messages",
     "Punchline": "Sup y'all? It's ya boy, Twitch XIV, and today we're gonna be playing some final fantasy fourteen.",
     "InternalName": "TwitchXIVReborn",
-    "AssemblyVersion": "1.0.1.0",
+    "AssemblyVersion": "1.0.1.1",
     "RepoUrl": "https://github.com/Tny5989/TwitchXIV",
     "ApplicableVersion": "any",
     "CategoryTags":
@@ -18,8 +18,8 @@
     "ImageUrls": [],
     "IsHidden": false,
     "IsTestingExclusive": false,
-    "DownloadLinkInstall": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.0/latest.zip",
-    "DownloadLinkTesting": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.0/latest.zip",
-    "DownloadLinkUpdate": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.0/latest.zip"
+    "DownloadLinkInstall": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.1/latest.zip",
+    "DownloadLinkTesting": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.1/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Tny5989/TwitchXIV/releases/download/v1.0.1.1/latest.zip"
   }
 ]
