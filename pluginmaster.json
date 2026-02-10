@@ -4,7 +4,7 @@
     "Name": "TwitchXIV (Reimagined)",
     "Description": "Allows you to join a Twitch chat and send/recieve messages",
     "Punchline": "Sup y'all? It's ya boy, Twitch XIV, and today we're gonna be playing some final fantasy fourteen.",
-    "InternalName": "TwitchXIV"
+    "InternalName": "TwitchXIV",
     "AssemblyVersion": "1.0.1.0",
     "RepoUrl": "https://github.com/Tny5989/TwitchXIV",
     "ApplicableVersion": "any",
