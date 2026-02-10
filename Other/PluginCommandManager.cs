@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static Dalamud.Game.Command.CommandInfo;
 using static Dalamud.Game.Command.IReadOnlyCommandInfo;
-// ReSharper disable ForCanBeConvertedToForeach
 
-namespace Veda
+namespace TwitchXIV.Other
 {
     public class PluginCommandManager<THost> : IDisposable
     {
@@ -21,7 +19,7 @@ namespace Veda
             this.commandManager = commands;
             this.host = host;
 
-            this.pluginCommands = host.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
+            this.pluginCommands = host!.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
               .Where(method => method.GetCustomAttribute<CommandAttribute>() != null)
               .SelectMany(GetCommandInfoTuple)
               .ToArray();
@@ -58,7 +56,6 @@ namespace Veda
             var command = handlerDelegate.Method.GetCustomAttribute<CommandAttribute>();
             var aliases = handlerDelegate.Method.GetCustomAttribute<AliasesAttribute>();
             var helpMessage = handlerDelegate.Method.GetCustomAttribute<HelpMessageAttribute>();
-            //var doNotShowInHelp = handlerDelegate.Method.GetCustomAttribute<DoNotShowInHelpAttribute>();
 
             var commandInfo = new CommandInfo(handlerDelegate)
             {

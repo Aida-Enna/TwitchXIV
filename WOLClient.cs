@@ -1,163 +1,176 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TwitchLib.Client.Models;
 using TwitchLib.Client;
 using TwitchLib.Communication.Models;
 using TwitchLib.Communication.Clients;
 using System.Text.RegularExpressions;
-using TwitchLib.Api.Helix;
 using TwitchLib.Client.Events;
-using Veda;
-using System.Linq.Expressions;
 using TwitchLib.Communication.Events;
+using System.Collections.Generic;
 
 namespace TwitchXIV
 {
-    internal class WOLClient
+    public class WOLClient : IDisposable
     {
-        public static TwitchClient Client;
-        public static bool DebugMode = false;
-        public static bool ShownLoginError = false;
+        #region Variables
 
-        public static void DoConnect()
+        public bool IsConnected { get => Client.IsConnected; }
+        public IReadOnlyList<JoinedChannel> JoinedChannels { get => Client.JoinedChannels; }
+
+        private TwitchClient Client = null!;
+
+        #endregion Variables
+        #region Init/Deinit
+
+        public WOLClient()
         {
-            ConnectionCredentials credentials = new ConnectionCredentials(Plugin.PluginConfig.Username, Plugin.PluginConfig.OAuthCode);
-            var clientOptions = new ClientOptions
+            Client = new(new WebSocketClient(new ClientOptions()
             {
                 MessagesAllowedInPeriod = 750,
                 ThrottlingPeriod = TimeSpan.FromSeconds(30)
-            };
-            WebSocketClient customClient = new WebSocketClient(clientOptions);
-            Client = new TwitchClient(customClient);
-            Client.Initialize(credentials, Plugin.PluginConfig.ChannelToSend);
-            Client.OnLog += Client_OnLog;
-            Client.OnJoinedChannel += Client_OnJoinedChannel;
-            Client.OnLeftChannel += Client_OnLeftChannel;
-            Client.OnMessageSent += Client_OnMessageSent;
-            Client.OnMessageReceived += Client_OnMessageReceived;
-            //Client.OnError += Client_OnError;
+            }));
 
-            //WOLClient.OnWhisperReceived += Client_OnWhisperReceived;
-            //WOLClient.OnNewSubscriber += Client_OnNewSubscriber;
-            //WOLClient.OnConnected += Client_OnConnected;
-            Client.Connect();
+            Client.OnLog += OnLog;
+            Client.OnJoinedChannel += OnJoinedChannel;
+            Client.OnLeftChannel += OnLeftChannel;
+            Client.OnMessageSent += OnMessageSent;
+            Client.OnMessageReceived += OnMessageReceived;
+            Client.OnError += OnError;
+            //Client.OnWhisperReceived += OnWhisperReceived;
+            //Client.OnNewSubscriber += OnNewSubscriber;
+            //Client.OnConnected += OnConnected;
         }
 
-        //public static void Client_OnError(object? sender, OnErrorEventArgs e)
-        //{
-        //    if (DebugMode)
-        //    {
-        //        Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, e.Exception.ToString(), ColorType.Twitch)); return;
-        //    }
-        //}
-
-        public static void Client_OnLog(object sender, OnLogArgs e)
+        public void Dispose()
         {
-            if (e.Data.Contains("Login authentication failed") && !ShownLoginError)
+            GC.SuppressFinalize(this);
+
+            if (Client.IsConnected)
             {
-                Functions.Print("Login authentication failed! Please check your username and OAuth code!", ColorType.Error);
-                ShownLoginError = true;
+                Client.Disconnect();
             }
-            //Filter out all the stuff we don't need to see
-            if (e.Data.StartsWith("Finished channel joining queue.") & !DebugMode) { return; }
+
+            //Client.OnConnected += OnConnected;
+            //Client.OnNewSubscriber += OnNewSubscriber;
+            //Client.OnWhisperReceived += OnWhisperReceived;
+            Client.OnError -= OnError;
+            Client.OnMessageReceived -= OnMessageReceived;
+            Client.OnMessageSent -= OnMessageSent;
+            Client.OnLeftChannel -= OnLeftChannel;
+            Client.OnJoinedChannel -= OnJoinedChannel;
+            Client.OnLog -= OnLog;
+
+            Client = null!;
+        }
+
+        #endregion Init/Deinit
+        #region Actions
+
+        public void Connect()
+        {
+            try
+            {
+                Client.Initialize(new(Plugin.PluginConfig.Username, Plugin.PluginConfig.OAuthCode), Plugin.PluginConfig.ChannelToSend);
+                Client.Connect();
+            }
+            catch (Exception e)
+            {
+                OnError(this, new OnErrorEventArgs() { Exception = e });
+            }
+        }
+
+        public void Disconnect() => Client.Disconnect();
+
+        public void SendMessage(JoinedChannel channel, string args) => Client.SendMessage(channel, args);
+
+        public void JoinChannel(string channel, bool overrideCheck = false) => Client.JoinChannel(channel, overrideCheck);
+        public void LeaveChannel(JoinedChannel channel) => Client.LeaveChannel(channel);
+
+        #endregion Actions
+        #region Event Handlers
+
+        public void OnError(object? sender, OnErrorEventArgs e)
+        {
+            Plugin.Logger.Print(e.Exception.Message);
+        }
+
+        public void OnLog(object sender, OnLogArgs e)
+        {
+            if (e.Data.Contains("Login authentication failed"))
+            {
+                Plugin.Logger.Print("Login authentication failed! Please check your username and OAuth code!");
+            }
+            if (e.Data.StartsWith("Finished channel joining queue.")) 
+            {
+                return; 
+            }
             if (e.Data.Contains("@msg-id=msg_channel_suspended"))
             {
-                //Chat.Print(e.Data);
-                //string Channel = e.Data.Replace("@msg-id=msg_channel_suspended :tmi.twitch.tv NOTICE #", "").Replace(" :This channel does not exist or has been suspended.", "");
-                Plugin.Chat.Print(Functions.BuildSeString(Plugin.PluginInterface.InternalName, "<c17>Unable <c17>to <c17>join <c575>" + Plugin.PluginConfig.ChannelToSend + " <c17>channel, <c17>reverting <c17>back <c17>to <c17>your <c17>channel. <c17>Please <c17>check <c17>the <c17>name <c17>and <c17>try <c17>again."));
+                Plugin.Logger.Print("Unable to join channel " + Plugin.PluginConfig.ChannelToSend + ", channel is suspended or does not exist! Reverting back to your own channel!");
                 Plugin.PluginConfig.ChannelToSend = Client.TwitchUsername;
                 Client.JoinChannel(Client.TwitchUsername);
             }
             if (e.Data.Contains("Received: @msg-id=") && e.Data.Contains("NOTICE"))
             {
-                //Chat.Print(e.Data);
                 string Message = Regex.Match(e.Data, Plugin.PluginConfig.ChannelToSend.ToLower() + " :.*").Value.Replace(Plugin.PluginConfig.ChannelToSend.ToLower() + " :", "");
-                Functions.Print(Message, ColorType.Info);
+                Plugin.Logger.Print(Message);
             }
-            if (e.Data.StartsWith("Received:") & !DebugMode) { return; }
-            if (e.Data.StartsWith("Writing:") & !DebugMode) { return; }
-            if (e.Data.StartsWith("Connecting to") & !DebugMode) { return; }
-            if ((e.Data.StartsWith("Joining ") || e.Data.StartsWith("Leaving ")) & !DebugMode) { return; }
-            if (e.Data == "Should be connected!") { Functions.Print("Connected to twitch chat", ColorType.Twitch); return; }
-            if (e.Data == "Disconnect Twitch Chat Client...") { Functions.Print("Disconnected from twitch chat", ColorType.Twitch); return; }
-
-            Functions.Print(e.Data, ColorType.Twitch);
-        }
-        public static void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
-        {
-            Functions.Print("<c541>Joined <c541>channel <c575>" + e.Channel);
-        }
-
-        public static void Client_OnLeftChannel(object sender, OnLeftChannelArgs e)
-        {
-            Functions.Print("<c541>Left <c541>channel <c575>" + e.Channel);
-        }
-        public static void Client_OnMessageSent(object sender, OnMessageSentArgs e)
-        {
-            string DisplayName = e.SentMessage.DisplayName;
-            if (e.SentMessage.IsModerator) { DisplayName = "" + DisplayName; }
-            Plugin.Chat.Print(Functions.BuildSeString("<c555>TWXIV", GetUsercolor(Client.TwitchUsername) + DisplayName + ": <c0>" + e.SentMessage.Message.Replace(" ", " <c0>")));
-        }
-        public static void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
-        {
-            if (!Plugin.PluginConfig.TwitchEnabled) { return; }
-            string DisplayName = e.ChatMessage.DisplayName;
-            if (e.ChatMessage.IsModerator) { DisplayName = "" + DisplayName; }
-            Plugin.Chat.Print(Functions.BuildSeString("<c555>TWXIV", GetUsercolor(e.ChatMessage.Username) + DisplayName + ": <c0>" + e.ChatMessage.Message.Replace(" ", " <c0>")));
-        }
-
-        public static string GetUsercolor(string Username)
-        {
-            try
+            if (e.Data.StartsWith("Received:")) 
             {
-                int ColorNumber;
-                if (Username.Length > 19)
-                {
-                    ColorNumber = Username.Length - 20;
-                }
-                else if (Username.Length > 9)
-                {
-                    ColorNumber = Username.Length - 10;
-                }
-                else
-                {
-                    ColorNumber = Username.Length;
-                }
-
-                switch (ColorNumber)
-                {
-                    case 0:
-                        return "<c518>"; //Red
-                    case 1:
-                        return "<c56>";  //Fushia?
-                    case 2:
-                        return "<c570>"; //Green
-                    case 3:
-                        return "<c14>";  //Dark Red
-                    case 4:
-                        return "<c531>"; //Peach
-                    case 5:
-                        return "<c42>";  //Forest Green
-                    case 6:
-                        return "<c561>"; //Light pink
-                    case 7:
-                        return "<c555>"; //Twitch purple
-                    case 8:
-                        return "<c566>"; //Bright blue
-                    case 9:
-                        return "<c500>"; //Orange
-                    default:
-                        return "<c0>";   //Broken, white
-                }
+                return; 
             }
-            catch (Exception f)
+            if (e.Data.StartsWith("Writing:")) 
             {
-                Functions.Print("Something went wrong - " + f.ToString(), ColorType.Error);
-                return "<c0>";
+                return; 
+            }
+            if (e.Data.StartsWith("Connecting to")) 
+            {
+                return;
+            }
+            if ((e.Data.StartsWith("Joining ") || e.Data.StartsWith("Leaving "))) 
+            {
+                return; 
+            }
+            if (e.Data == "Should be connected!")
+            {
+                Plugin.Logger.Print("Connected to Twitch chat!");
+                return;
+            }
+            if (e.Data == "Disconnect Twitch Chat Client...")
+            {
+                Plugin.Logger.Print("Disconnected from Twitch chat!");
+                return;
             }
         }
+
+        public void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
+        {
+            Plugin.Logger.Print($"Joined channel: {e.Channel}");
+        }
+
+        public void OnLeftChannel(object sender, OnLeftChannelArgs e)
+        {
+            Plugin.Logger.Print($"Left channel: {e.Channel}");
+        }
+
+        public void OnMessageSent(object sender, OnMessageSentArgs e)
+        {
+            if (!Plugin.PluginConfig.TwitchEnabled)
+            {
+                return;
+            }
+            Plugin.Logger.Print(e.SentMessage);
+        }
+
+        public void OnMessageReceived(object sender, OnMessageReceivedArgs e)
+        {
+            if (!Plugin.PluginConfig.TwitchEnabled) 
+            { 
+                return; 
+            }
+            Plugin.Logger.Print(e.ChatMessage);
+        }
+
+        #endregion Event Handlers
     }
 }
