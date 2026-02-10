@@ -73,8 +73,14 @@ namespace TwitchXIV
         #endregion Init/Deinit
         #region Commands
 
+        [Command("/twclear")]
+        [HelpMessage("Clears Twitch chat window")]
+        public void ClearTwitchChat(string command, string args)
+        {
+            ChatUi.ClearLines();
+        }
+
         [Command("/twchat")]
-        [Aliases("/twc")]
         [HelpMessage("Toggles Twitch chat window")]
         public void ToggleTwitchChat(string command, string args)
         {
@@ -82,14 +88,13 @@ namespace TwitchXIV
         }
 
         [Command("/twitch")]
-        [Aliases("/twconfig")]
         [HelpMessage("Shows TwitchXIV configuration options")]
         public void ToggleTwitchOptions(string command, string args)
         {
             ConfigUi.ToggleVisibility();
         }
 
-        [Command("/toff")]
+        [Command("/twoff")]
         [HelpMessage("Disconnect from Twitch")]
         public void DisconnectFromTwitch(string command, string args)
         {
@@ -104,7 +109,7 @@ namespace TwitchXIV
             }
         }
 
-        [Command("/tt")]
+        [Command("/twt")]
         [HelpMessage("Turn twitch chat relay on/off")]
         public void ToggleTwitch(string command, string args)
         {
@@ -113,7 +118,7 @@ namespace TwitchXIV
         }
 
         [Command("/tw")]
-        [HelpMessage("Sends a message to the specified channel in options\nUsage: /tw Hey guys, how is the stream going?")]
+        [HelpMessage("Sends a message to the specified channel in options")]
         public void SendTwitchChat(string command, string args)
         {
             if (!Plugin.PluginConfig.TwitchEnabled)
@@ -140,8 +145,8 @@ namespace TwitchXIV
             TwitchClient.SendMessage(TwitchClient.JoinedChannels[0], args);
         }
 
-        [Command("/tchannel")]
-        [HelpMessage("Switch chat to the specified channel\nUsage: /tchannel streamer_username")]
+        [Command("/twchannel")]
+        [HelpMessage("Switch chat to the specified channel")]
         public void SwitchTwitchChannel(string command, string args)
         {
             try

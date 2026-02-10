@@ -18,6 +18,7 @@ namespace TwitchXIV
         private static readonly Vector2 InitialSize = new(520, 260);
 
         private bool IsVisible = true;
+        private bool Clear = false;
 
         #endregion Variables
         #region Visibility
@@ -61,6 +62,11 @@ namespace TwitchXIV
         #endregion Drawing
         #region Line Updates
 
+        public void ClearLines()
+        {
+            Clear = true;
+        }
+
         public void AddLine(string channel, string user, string message, Vector4 userColor)
         {
             PendingLines.Enqueue((channel, user, message, userColor));
@@ -68,6 +74,13 @@ namespace TwitchXIV
 
         public void PruneLines(int limit)
         {
+            if (Clear)
+            {
+                Clear = false;
+                ChatLines.Clear();
+                return;
+            }
+
             while (ChatLines.Count > limit)
             {
                 ChatLines.RemoveAt(0);
