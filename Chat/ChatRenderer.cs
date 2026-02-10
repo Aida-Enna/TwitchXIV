@@ -6,6 +6,11 @@ namespace TwitchXIV.Chat
 {
     public sealed class ChatRenderer
     {
+        #region Variables
+        private float PreviousScrollY { get; set; } = 0f;
+        private float PreviousScrollMaxY { get; set; } = 0f;
+
+        #endregion Variables
         #region Drawing Lines
         public void DrawLines(List<WrappedChatLine> lines)
         {
@@ -15,16 +20,14 @@ namespace TwitchXIV.Chat
                 return;
             }
 
+            TrackScroll();
+
             foreach (var line in lines)
             {
                 DrawLine(line);
             }
 
-            if (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())
-            {
-                ImGui.SetScrollHereY(1f);
-            }
-
+            UpdateScroll();
             ImGui.EndChild();
         }
 
@@ -76,5 +79,26 @@ namespace TwitchXIV.Chat
         }
 
         #endregion Drawing Highlight
+        #region Scroll
+
+        private void TrackScroll()
+        {
+            PreviousScrollY = ImGui.GetScrollY();
+            PreviousScrollMaxY = ImGui.GetScrollMaxY();
+        }
+
+        private void UpdateScroll()
+        {
+            if (PreviousScrollY >= PreviousScrollMaxY - 1f)
+            {
+                ImGui.SetScrollHereY(1f);
+            }
+            else
+            {
+                ImGui.SetScrollY(PreviousScrollY + (ImGui.GetScrollMaxY() - PreviousScrollMaxY));
+            }
+        }
+
+        #endregion Scroll
     }
 }
